@@ -39,18 +39,18 @@ f.DEFINE_string("log_exact_match", True, "Whether to log exact match scores.")
 f.DEFINE_string("log_f1_score", True, "Whether to log f1 scores.")
 f.DEFINE_string("log_valid_every", 100, "Frequency (in iterations) to log " +
         "loss & gradients for the validation data set.")
-f.DEFINE_boolean("use_s3", False,
+f.DEFINE_boolean("use_s3", True,
         "Whether to use AWS S3 storage to save model checkpoints. " +
         "Checkpoints will be saved according to the experiment name and " +
         "model type.")
-f.DEFINE_string("s3_bucket_name", "zippy-machine-learning",
+f.DEFINE_string("s3_bucket_name", "my_experiments",
         "The AWS S3 bucket to save models to.")
 f.DEFINE_string("s3_data_folder_name", "data", "Folder within the S3 bucket " +
         "to store train/dev data and word vector indices. Only applies if " +
         "s3 storage is enabled. Using this makes it faster to start up "
         "training on another instance, rather than using SCP to upload " +
         "files and then unzip them on the EC2 instance.")
-f.DEFINE_integer("num_gpus", 2, "Number of GPUs available for training. " +
+f.DEFINE_integer("num_gpus", 1, "Number of GPUs available for training. " +
         "Use 0 for CPU-only training")
 f.DEFINE_integer("batch_size", 24, "Training batch size. If using GPUs, " +
         "then this will be the same for each GPU.")

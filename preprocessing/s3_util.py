@@ -1,10 +1,13 @@
 """Uploads training data to AWS S3, if configured.
 """
 
-import boto3
 import glob
 import os
 import time
+import oss2
+access_key_id = os.getenv('ossid')
+access_key_secret = os.getenv('osskey')
+endpoint = os.getenv('osshost')
 
 def _everything_after_first_slash(s):
     pieces = s.split("/")
@@ -14,10 +17,7 @@ def _everything_after_first_slash(s):
 
 def _get_s3_files_in_bucket(options, bucket):
     key_prefix = options.s3_data_folder_name
-    data_objs = set()
-    for obj in bucket.objects.filter(Prefix=key_prefix):
-        data_file_key = _everything_after_first_slash(obj.key) # Everything after the data folder name.
-        data_objs.add(data_file_key)
+    data_objs = {_everything_after_first_slash(obj.key) for obj in bucket.list_objects(prefix=key_prefix).object_list}
     return data_objs
 
 def _get_existing_data_files(options):
@@ -40,8 +40,9 @@ def maybe_upload_data_files_to_s3(options):
         print("S3 not enabled; not uploading to S3.")
         return
     start = time.time()
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(options.s3_bucket_name)
+    # s3 = boto3.resource('s3')
+    # bucket = s3.Bucket(options.s3_bucket_name)
+    bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, options.s3_bucket_name)
     data_files = _get_existing_data_files(options)
     if _already_uploaded_s3_files(options, bucket, data_files):
         print("Already uploaded all data files to s3. Not reuploading.")
@@ -51,7 +52,8 @@ def maybe_upload_data_files_to_s3(options):
         key = os.path.join(options.s3_data_folder_name, file_name)
         full_file_name = os.path.join(options.data_dir, file_name)
         print("Uploading %s to %s" % (full_file_name, key))
-        bucket.upload_file(full_file_name, key)
+        # bucket.upload_file(full_file_name, key)
+        bucket.put_object_from_file(key, full_file_name)
     print("Uploaded %d data files to AWS S3 in %f seconds" % (
                 len(data_files), time.time() - start))
 
@@ -71,8 +73,9 @@ def maybe_download_data_files_from_s3(options):
     if not os.path.isdir(options.data_dir):
         os.makedirs(options.data_dir)
     print("Downloading data files from S3")
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(options.s3_bucket_name)
+    # s3 = boto3.resource('s3')
+    # bucket = s3.Bucket(options.s3_bucket_name)
+    bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, options.s3_bucket_name)
     data_files = _get_existing_data_files(options)
     s3_files = _get_s3_files_in_bucket(options, bucket)
     start = time.time()
@@ -84,6 +87,6 @@ def maybe_download_data_files_from_s3(options):
             print("Already downloaded file %s. Not downloading again."
                   % local_file_name)
             continue
-        bucket.download_file(s3_key, local_file_name)
+        bucket.get_object_to_file(s3_key, local_file_name)
     print("Time to download %d data files: %s" % (len(s3_files),
                 time.time() - start))
