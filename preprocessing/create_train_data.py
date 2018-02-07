@@ -164,7 +164,7 @@ class DataParser():
             list_word_in_question.append(word_in_question_list)
             list_word_in_context.append(word_in_context_list)
             print("Value", self.value_idx, "of", num_values, "percent done",
-                  100 * float(self.value_idx) / float(num_values), end="\r")
+                  100 * float(self.value_idx) / float(num_values))
             self.value_idx += 1
 
     def _get_num_data_values(self, dataset):

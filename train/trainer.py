@@ -152,7 +152,7 @@ class Trainer:
                       "learning rate: %.3E" % _get_val(current_learning_rate),
                       "loss: %.3E" % _get_val(loss_value),
                       "Sec/iter: %.3f" % time_per_iter, 
-                      "time/epoch", readable_time(time_per_epoch), end="\r")
+                      "time/epoch", readable_time(time_per_epoch))
                 if i % self.options.log_every == 0:
                     if self.options.log_gradients:
                         self.train_writer.add_summary(gradients_summary_value, i)

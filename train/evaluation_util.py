@@ -160,7 +160,7 @@ def _eval(session, towers, squad_dataset, options, is_train, sample_limit):
             print("Estimated percent evaluated: %f (processing files: %d of %d). %s"
                 % (est_percent_done, min(num_files_processed + 1, num_dev_files),
                     num_dev_files, readable_eta(est_time_left)),
-                end="\r", flush=True)
+                flush=True)
     print("")
     if not is_train:
         if not os.path.exists(options.evaluation_dir):

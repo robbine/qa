@@ -2,7 +2,7 @@
 """
 
 def clear_printed_line(num_chars_to_clear=200):
-    print(" " * num_chars_to_clear, end="\r", flush=True)
+    print(" " * num_chars_to_clear, flush=True)
 
 # Encode a string in utf8 encoding. Mostly, this is used so that it can be
 # printed.
