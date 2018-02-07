@@ -92,7 +92,7 @@ f.DEFINE_boolean("use_word_fusion_feature", False, "Whether to use the word" +
         "fusion feature as a model input.")
 f.DEFINE_float("fusion_matrix_dimension", 250, "Dimension of the diagonal" +
         "matrix for fusion (FusionNet).")
-f.DEFINE_boolean("use_cove_vectors", True, "Whether to use CoVe vectors" +
+f.DEFINE_boolean("use_cove_vectors", False, "Whether to use CoVe vectors" +
         "as additional model inputs.")
 f.DEFINE_integer("num_qa_loops", 2, "")
 f.DEFINE_integer("qa_diag_dim", 20, "")
