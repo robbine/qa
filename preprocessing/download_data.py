@@ -4,7 +4,7 @@
 import os
 import preprocessing.constants as constants
 import sys
-import urllib.request as request
+
 import zipfile
 
 from preprocessing.download_utils import download_file_with_progress, unzip_file_and_remove

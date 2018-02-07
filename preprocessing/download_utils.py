@@ -1,6 +1,6 @@
 import os
 import sys
-import urllib.request as request
+import urllib2
 import zipfile
 
 
@@ -9,7 +9,10 @@ def download_file_with_progress(url, filename):
         sys.stdout.write("Download progress: %d%%   \r" % int(current_blocks * block_size_bytes * 100.0 / total_size) )
         sys.stdout.flush()
     print("Downloading file", filename, "from url", url)
-    request.urlretrieve(url, filename=filename, reporthook=display_progress)
+    with open(filename, 'wb') as f:
+        f.write(urllib2.urlopen(url).read())
+        f.close()
+
     print("")
 
 def unzip_file_and_remove(zip_file_name, unzip_dir):
