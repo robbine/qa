@@ -1,7 +1,6 @@
 """Trains a model on SQuAD data.
 """
 
-import boto3
 import os
 import shutil
 import time

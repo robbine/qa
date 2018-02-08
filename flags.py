@@ -43,7 +43,7 @@ f.DEFINE_boolean("use_s3", True,
         "Whether to use AWS S3 storage to save model checkpoints. " +
         "Checkpoints will be saved according to the experiment name and " +
         "model type.")
-f.DEFINE_string("s3_bucket_name", "my_experiments",
+f.DEFINE_string("s3_bucket_name", "squadexperiments",
         "The AWS S3 bucket to save models to.")
 f.DEFINE_string("s3_data_folder_name", "data", "Folder within the S3 bucket " +
         "to store train/dev data and word vector indices. Only applies if " +

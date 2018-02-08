@@ -1,7 +1,6 @@
 """Evaluates a set of models.
 """
 
-import boto3
 import os
 import shutil
 import time

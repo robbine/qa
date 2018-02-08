@@ -13,7 +13,7 @@ def maybe_upload_files_to_s3(s3, save_key, dir_path, options):
     """Uploads everything from the path to s3. Each file is saved with a key
        of 'save_key/filename'
     """
-    if s3 is None:
+    if not options.use_s3:
         return
     start = time.time()
     # bucket = s3.Bucket(options.s3_bucket_name)
@@ -31,7 +31,7 @@ def maybe_upload_files_to_s3(s3, save_key, dir_path, options):
 def maybe_download_files_from_s3(s3, save_key, dir_path, options):
     """Downloads all files with the prefix 'save_key' to the path 'dir_path.'
     """
-    if s3 is None:
+    if not options.use_s3:
         return
     start = time.time()
     # bucket = s3.Bucket(options.s3_bucket_name)
