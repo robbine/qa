@@ -39,7 +39,7 @@ class Trainer:
             os.makedirs(self.options.checkpoint_dir)
         except:
             print("exist")
-        with tf.Graph().as_default(), tf.device('/cpu:0'):
+        with tf.Graph().as_default():
             self.session = create_session()
             self.sq_dataset = create_sq_dataset(self.options)
 
@@ -151,13 +151,13 @@ class Trainer:
                 iter_end = time.time()
                 time_per_iter = iter_end - iter_start
                 time_per_epoch = time_per_iter * iterations_per_epoch
-                print("iteration:", str(i),
+                if i % self.options.log_every == 0:
+                    print("iteration:", str(i),
                       "highest f1: %.4f" % current_highest_f1,
                       "learning rate: %.3E" % _get_val(current_learning_rate),
                       "loss: %.3E" % _get_val(loss_value),
-                      "Sec/iter: %.3f" % time_per_iter, 
+                      "Sec/iter: %.3f" % time_per_iter,
                       "time/epoch", readable_time(time_per_epoch))
-                if i % self.options.log_every == 0:
                     if self.options.log_gradients:
                         self.train_writer.add_summary(gradients_summary_value, i)
                     if self.options.log_loss:
