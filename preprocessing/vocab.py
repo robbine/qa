@@ -73,7 +73,7 @@ def get_vocab(data_dir="data"):
     position_to_word = {}
     word_to_position = {}
     i = 0
-    with open(os.path.join(data_dir, constants.VOCAB_FILE), encoding="utf-8") as f:
+    with open(os.path.join(data_dir, constants.VOCAB_FILE)) as f:
         for line in f:
             word = line[:-1]
             word_to_position[word] = i

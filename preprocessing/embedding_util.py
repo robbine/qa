@@ -18,7 +18,7 @@ def load_word_char_embeddings(options):
 
 def _get_line_count(filename):
     num_lines = 0
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, "r") as f:
         for _ in f:
             num_lines += 1
     return num_lines
@@ -37,11 +37,11 @@ def split_vocab_and_embedding(data_dir, download_dir):
     print("Vocab size: %d" % num_lines)
     # Include 4 entries for bos/eos/unk/pad (they will all be left as 0 vectors).
     embedding = np.zeros((num_lines + 4, constants.WORD_VEC_DIM), dtype=np.float32)
-    vocab_o_file = open(vocab_output_file, "w", encoding="utf-8")
+    vocab_o_file = open(vocab_output_file, "w")
     # Get IDs for the total vocab, not just the words. This includes
     # the bos/eos/unk/pad.
     vocab_chars = np.zeros((num_lines + 4, constants.MAX_WORD_LEN), dtype=np.uint8)
-    i_file = open(input_file, "r", encoding="utf-8")
+    i_file = open(input_file, "r")
     i = 0
     char_counts = {}
     vocab_list = []
