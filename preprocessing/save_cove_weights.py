@@ -15,7 +15,10 @@ def save_cove_weights(options):
         for name in constants.COVE_WEIGHT_NAMES]):
         print("Cove weights already saved")
         return
-    os.makedirs(folder_name, exist_ok=True)
+    try:
+        os.makedirs(folder_name)
+    except:
+        print("exist")
     vocab = get_vocab(options.data_dir)
     embeddings = embedding_util.load_word_embeddings_including_unk_and_padding(
         options)

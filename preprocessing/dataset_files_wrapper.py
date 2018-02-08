@@ -7,7 +7,10 @@ import preprocessing.constants as constants
 
 class DatasetFilesWrapper():
     def __init__(self, full_data_folder):
-        os.makedirs(full_data_folder, exist_ok=True)
+        try:
+            os.makedirs(full_data_folder)
+        except:
+            print("exist")
         self.data_dir = full_data_folder
         self.next_batch_number = 0
 

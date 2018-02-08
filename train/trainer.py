@@ -36,8 +36,10 @@ class Trainer:
     def train(self):
         train_start_time = time.time()
         self.s3 = boto3.resource('s3') if self.options.use_s3 else None
-        os.makedirs(self.options.checkpoint_dir, exist_ok=True)
-
+        try:
+            os.makedirs(self.options.checkpoint_dir)
+        except:
+            print("exist")
         with tf.Graph().as_default(), tf.device('/cpu:0'):
             self.session = create_session()
             self.sq_dataset = create_sq_dataset(self.options)
@@ -79,7 +81,10 @@ class Trainer:
 
             if self.options.clear_logs_before_training:
                 shutil.rmtree(self.options.log_dir, ignore_errors=True)
-            os.makedirs(self.options.log_dir, exist_ok=True)
+            try:
+                os.makedirs(self.options.log_dir)
+            except:
+                print("exist")
             self.train_writer = tf.summary.FileWriter(os.path.join(
                 self.options.log_dir, "train"), graph=tf.get_default_graph())
             self.val_writer = tf.summary.FileWriter(os.path.join(

@@ -61,7 +61,10 @@ def _maybe_create_directories_for_file(options, s3_file):
     split_dirs = s3_file.split("/")
     dirs = "/".join(split_dirs[:-1])
     if dirs:
-        os.makedirs(os.path.join(options.data_dir, dirs), exist_ok=True)
+        try:
+            os.makedirs(os.path.join(options.data_dir, dirs))
+        except:
+            print("exist")
 
 def maybe_download_data_files_from_s3(options):
     """Downloads preprocessed training data from S3 storage, if s3 is

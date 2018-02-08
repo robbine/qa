@@ -22,7 +22,10 @@ class Evaluator:
 
     def evaluate(self):
         self.s3 = boto3.resource('s3') if self.options.use_s3 else None
-        os.makedirs(self.options.checkpoint_dir, exist_ok=True)
+        try:
+            os.makedirs(self.options.checkpoint_dir)
+        except:
+            print("exist")
 
         with tf.Graph().as_default(), tf.device('/cpu:0'):
             self.session = create_session()
