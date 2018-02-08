@@ -23,7 +23,7 @@ def _get_s3_files_in_bucket(options, bucket):
 def _get_existing_data_files(options):
     # Grab everything in the data directory. This is a scalable solution, but
     # it also assumes that no extraneous files are placed in the directory.
-    data_files = glob.glob(os.path.join(options.data_dir, "**/*"), recursive=True)
+    data_files = glob.glob(os.path.join(options.data_dir, "**/*"))
     data_files = [f for f in data_files if not os.path.isdir(f)]
     data_files = [_everything_after_first_slash(f) for f in data_files] # Remove the `data_dir` prefix.
     return data_files
