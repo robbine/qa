@@ -6,7 +6,7 @@ import tensorflow as tf
 from abc import ABCMeta, abstractmethod
 from model.input_util import *
 
-class BaseModel:
+class BaseModel(object):
     def __init__(self, options, tf_iterators, sq_dataset, embeddings,
             word_chars, cove_cells, sess):
         self.sq_dataset = sq_dataset
