@@ -33,7 +33,7 @@ def maybe_restore_model(s3, s3_save_key, options, session,
     print("Restoring or creating new model...")
     start = time.time()
     maybe_download_files_from_s3(s3, s3_save_key, options.checkpoint_dir, options)
-    if os.path.exists(checkpoint_file_name + ".index"):
+    if options.read_graph and os.path.exists(checkpoint_file_name + ".index"):
         print("Restoring model from checkpoint %s" % checkpoint_file_name)
         saver.restore(session, checkpoint_file_name)
     else:

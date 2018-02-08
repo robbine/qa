@@ -112,6 +112,7 @@ f.DEFINE_integer("num_stochastic_answer_pointer_steps", 5,
         "Number of steps to use for the stochastic memory answer pointer.")
 f.DEFINE_boolean("use_token_reembedding", False, "Whether to use token" +
         "reembedding on the model inputs (passage & question).")
+f.DEFINE_boolean("read_graph", False, "Whether to read pre-trained graph")
 
 def get_options_from_flags():
     return tf.app.flags.FLAGS
