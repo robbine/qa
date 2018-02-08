@@ -34,7 +34,7 @@ class Trainer:
 
     def train(self):
         train_start_time = time.time()
-        self.s3 = boto3.resource('s3') if self.options.use_s3 else None
+        self.s3 = None
         try:
             os.makedirs(self.options.checkpoint_dir)
         except:

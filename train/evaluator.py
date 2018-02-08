@@ -20,7 +20,7 @@ class Evaluator:
         self.checkpoint_file_name = create_checkpoint_file_name(options)
 
     def evaluate(self):
-        self.s3 = boto3.resource('s3') if self.options.use_s3 else None
+        self.s3 = None
         try:
             os.makedirs(self.options.checkpoint_dir)
         except:
