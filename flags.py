@@ -30,7 +30,7 @@ f.DEFINE_boolean("visualize_evaluated_results", True,
         "predicted spans to a file when running evaluation.")
 f.DEFINE_string("log_dir", "log", "Directory to log training summaries. " +
         "These summaries can be monitored with tensorboard.")
-f.DEFINE_string("clear_logs_before_training", False,
+f.DEFINE_string("clear_logs_before_training", True,
         "Whether to clear the log directory before starting training.")
 f.DEFINE_integer("log_every", 100, "Frequency to log loss and gradients.")
 f.DEFINE_string("log_loss", True, "Whether to log loss summaries.")

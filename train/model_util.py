@@ -33,7 +33,8 @@ def maybe_restore_model(s3, s3_save_key, options, session,
     print("Restoring or creating new model...")
     start = time.time()
     maybe_download_files_from_s3(s3, s3_save_key, options.checkpoint_dir, options)
-    if options.read_graph and os.path.exists(checkpoint_file_name + ".index"):
+    checkpoint_file_name = tf.train.latest_checkpoint(checkpoint_dir=options.checkpoint_dir)
+    if options.read_graph and checkpoint_file_name:
         print("Restoring model from checkpoint %s" % checkpoint_file_name)
         saver.restore(session, checkpoint_file_name)
     else:

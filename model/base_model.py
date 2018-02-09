@@ -44,6 +44,7 @@ class BaseModel(object):
         return self.rnn_keep_prob
 
     def setup(self):
+        self.global_step = tf.get_variable('global_step', shape=[], dtype=tf.int32, initializer=tf.constant_initializer(0), trainable=False)
         self.use_dropout_placeholder = tf.placeholder(tf.bool, name="use_dropout")
         self.keep_prob = tf.placeholder(tf.float32, name="keep_prob")
         self.input_keep_prob = tf.placeholder(tf.float32, name="input_keep_prob")

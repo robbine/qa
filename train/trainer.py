@@ -158,8 +158,6 @@ class Trainer:
                       "loss: %.3E" % _get_val(loss_value),
                       "Sec/iter: %.3f" % time_per_iter,
                       "time/epoch", readable_time(time_per_epoch))
-                    self.saver.save(self.session, self.checkpoint_file_name, global_step=i)
-                    maybe_upload_files_to_s3(self.s3, self.s3_save_key, self.options.checkpoint_dir, self.options)
                     if self.options.log_gradients:
                         self.train_writer.add_summary(gradients_summary_value, i)
                     if self.options.log_loss:
