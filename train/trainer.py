@@ -158,6 +158,7 @@ class Trainer:
                       "loss: %.3E" % _get_val(loss_value),
                       "Sec/iter: %.3f" % time_per_iter,
                       "time/epoch", readable_time(time_per_epoch))
+                    self.saver.save(self.session, self.checkpoint_file_name, global_step=i)
                     if self.options.log_gradients:
                         self.train_writer.add_summary(gradients_summary_value, i)
                     if self.options.log_loss:
@@ -229,7 +230,7 @@ class Trainer:
                             highest_f1_placeholder: val_f1})
                         current_highest_f1 = val_f1
                         print("Achieved new highest F1: %f" % val_f1)
-                        self.saver.save(self.session, self.checkpoint_file_name)
+                        self.saver.save(self.session, self.checkpoint_file_name, global_step=i)
                         maybe_upload_files_to_s3(self.s3, self.s3_save_key,
                             self.options.checkpoint_dir, self.options)
                         print("Saved model at iteration", i)
