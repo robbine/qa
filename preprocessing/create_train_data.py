@@ -54,6 +54,9 @@ class DataParser():
         self.nlp = spacy.load("en")
         self.tokenizer = create_tokenizer(self.nlp)
         self.nlp.tokenizer = self.tokenizer
+        print("Getting vocabulary")
+        self.vocab = get_vocab(self.data_dir)
+        print("Finished getting vocabulary")
 
     def _parse_data_from_tokens_list(self, tokens_list, tokens_ner_dict):
         """Input: A spaCy doc.
@@ -346,9 +349,6 @@ class DataParser():
             print("Train & dev data already exist.")
             return
 
-        print("Getting vocabulary")
-        self.vocab = get_vocab(self.data_dir)
-        print("Finished getting vocabulary")
 
         print("Getting DEV dataset")
         dev_raw_data = self._create_train_data_internal(
