@@ -51,6 +51,9 @@ class DataParser():
         self.question_id = 0
         self.ner_categories = StringCategory()
         self.pos_categories = StringCategory()
+        self.nlp = spacy.load("en")
+        self.tokenizer = create_tokenizer(self.nlp)
+        self.nlp.tokenizer = self.tokenizer
 
     def _parse_data_from_tokens_list(self, tokens_list, tokens_ner_dict):
         """Input: A spaCy doc.
@@ -198,7 +201,7 @@ class DataParser():
         """
         filename = os.path.join(self.download_dir, data_file)
         print("Reading data from file", filename)
-        with open(filename) as data_file: 
+        with open(filename) as data_file:
             data = json.load(data_file)
             dataset = data["data"]
             num_values = self._get_num_data_values(dataset)
@@ -346,9 +349,7 @@ class DataParser():
         print("Getting vocabulary")
         self.vocab = get_vocab(self.data_dir)
         print("Finished getting vocabulary")
-        self.nlp = spacy.load("en")
-        self.tokenizer = create_tokenizer(self.nlp)
-        self.nlp.tokenizer = self.tokenizer
+
         print("Getting DEV dataset")
         dev_raw_data = self._create_train_data_internal(
             constants.DEV_SQUAD_FILE, is_dev=True)
