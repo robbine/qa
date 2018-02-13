@@ -1,7 +1,7 @@
 """Defines constants for character representations.
 """
 
-# Reduce the maximum number of characters to prevent blowing up the data set
+# Reduce the maximum number of characters to to 256 prevent blowing up the data set
 # size.
 MAX_CHARS = (2**8)
 # Beginning of sentence. Only corresponds to the BOS word id.

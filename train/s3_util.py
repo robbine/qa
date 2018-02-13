@@ -42,7 +42,10 @@ def maybe_download_files_from_s3(s3, save_key, dir_path, options):
         num_files += 1
         file_name = os.path.basename(obj.key)
         full_file_name = os.path.join(dir_path, file_name)
+        if os.path.exists(full_file_name):
+            print("Already downloaded file %s. Not downloading again."
+                  % full_file_name)
+            continue
         print("[S3] Downloading key", obj.key, "to file", full_file_name)
-        # bucket.download_file(obj.key, full_file_name)
         bucket.get_object_to_file(obj.key, full_file_name)
     print("Time to download %d files: %s" % (num_files, time.time() - start))

@@ -23,6 +23,7 @@ _EOS = "eos"
 
 _DEBUG_USE_ONLY_FIRST_ARTICLE = False
 
+
 # Note: Some of the training/dev data seems to be inaccurate. This code
 # tries to make sure that at least one of the "qa" options in the acceptable
 # answers list is accurate and includes it in the data set.
@@ -32,16 +33,19 @@ class TextPosition:
         self.start_idx = start_idx
         self.end_idx = end_idx
 
+
 class PassageContext:
     '''Class used to save the tokenization positions in a given passage
        so that the original strings can be used for constructing answer
        spans rather than joining tokenized strings, which isn't 100% correct.
     '''
+
     def __init__(self, passage_str, word_id_to_text_positions,
-        acceptable_gnd_truths):
+                 acceptable_gnd_truths):
         self.passage_str = passage_str
         self.word_id_to_text_positions = word_id_to_text_positions
         self.acceptable_gnd_truths = acceptable_gnd_truths
+
 
 class DataParser():
     def __init__(self, data_dir, download_dir):
@@ -93,14 +97,14 @@ class DataParser():
         return vocab_ids_list, vocab_ids_set, pos_list, ner_list
 
     def _maybe_add_samples(self, tok_context=None, tok_question=None, qa=None,
-        ctx_offset_dict=None, ctx_end_offset_dict=None, list_contexts=None,
-        list_word_in_question=None, list_questions=None,
-        list_word_in_context=None, spans=None, num_values=None,
-        question_ids=None,
-        context_pos=None,
-        question_pos=None, context_ner=None, question_ner=None,
-        is_dev=None, ctx_ner_dict=None, qst_ner_dict=None,
-        psg_ctx=None):
+                           ctx_offset_dict=None, ctx_end_offset_dict=None, list_contexts=None,
+                           list_word_in_question=None, list_questions=None,
+                           list_word_in_context=None, spans=None, num_values=None,
+                           question_ids=None,
+                           context_pos=None,
+                           question_pos=None, context_ner=None, question_ner=None,
+                           is_dev=None, ctx_ner_dict=None, qst_ner_dict=None,
+                           psg_ctx=None):
         first_answer = True
         for answer in qa["answers"]:
             answer_start = answer["answer_start"]
@@ -118,7 +122,7 @@ class DataParser():
                         continue
                     st = tok.idx
                     end = st + len(tok.text)
-                    if st <= answer_start and answer_start <= end:
+                    if st <= answer_start <= end:
                         tok_start = tok
                         if z == len(tok_context) - 2:
                             tok_end = tok
@@ -131,7 +135,7 @@ class DataParser():
             tok_start_idx, tok_end_idx = None, None
             for z in range(len(tok_context)):
                 tok = tok_context[z]
-                if not isinstance(tok, spacy.tokens.token.Token): # BOS, EOS
+                if not isinstance(tok, spacy.tokens.token.Token):  # BOS, EOS
                     continue
                 if tok == tok_start:
                     tok_start_idx = z
@@ -139,8 +143,8 @@ class DataParser():
                     tok_end_idx = z
                 if tok_start_idx is not None and tok_end_idx is not None:
                     break
-            assert(tok_start_idx is not None)
-            assert(tok_end_idx is not None)
+            assert (tok_start_idx is not None)
+            assert (tok_end_idx is not None)
             # For dev, only keep one exmaple per question, and the set of all
             # acceptable answers. This reduces the required memory for storing
             # data.
@@ -152,14 +156,14 @@ class DataParser():
             question_ids.append(self.question_id)
 
             ctx_vocab_ids_list, ctx_vocab_ids_set, \
-                ctx_pos_list, ctx_ner_list = \
+            ctx_pos_list, ctx_ner_list = \
                 self._parse_data_from_tokens_list(tok_context, ctx_ner_dict)
             list_contexts.append(ctx_vocab_ids_list)
             context_pos.append(ctx_pos_list)
             context_ner.append(ctx_ner_list)
 
             qst_vocab_ids_list, qst_vocab_ids_set, \
-                qst_pos_list, qst_ner_list = \
+            qst_pos_list, qst_ner_list = \
                 self._parse_data_from_tokens_list(tok_question, qst_ner_dict)
             list_questions.append(qst_vocab_ids_list)
             question_pos.append(qst_pos_list)
@@ -255,32 +259,30 @@ class DataParser():
                             TextPosition(0, 0)
                         word_idx += 1
 
-#                    word_idx = 0
-#                    tok_contexts_with_bos_and_eos.append(_BOS)
-#                    word_idx_to_text_position[word_idx] = \
-#                        TextPosition(0, 0)
-#                    word_idx += 1
-#                    for token in tok_context:
-#                        tok_contexts_with_bos_and_eos.append(token)
-#                        st = token.idx
-#                        end = token.idx + len(token.text)
-#                        ctx_offset_dict[st] = token
-#                        ctx_end_offset_dict[end] = token
-#                        word_idx_to_text_position[word_idx] = \
-#                            TextPosition(st, end)
-#                        word_idx += 1
-#                    tok_contexts_with_bos_and_eos.append(_EOS)
-#                    word_idx_to_text_position[word_idx] = \
-#                        TextPosition(0, 0)
+                    #                    word_idx = 0
+                    #                    tok_contexts_with_bos_and_eos.append(_BOS)
+                    #                    word_idx_to_text_position[word_idx] = \
+                    #                        TextPosition(0, 0)
+                    #                    word_idx += 1
+                    #                    for token in tok_context:
+                    #                        tok_contexts_with_bos_and_eos.append(token)
+                    #                        st = token.idx
+                    #                        end = token.idx + len(token.text)
+                    #                        ctx_offset_dict[st] = token
+                    #                        ctx_end_offset_dict[end] = token
+                    #                        word_idx_to_text_position[word_idx] = \
+                    #                            TextPosition(st, end)
+                    #                        word_idx += 1
+                    #                    tok_contexts_with_bos_and_eos.append(_EOS)
+                    #                    word_idx_to_text_position[word_idx] = \
+                    #                        TextPosition(0, 0)
 
                     for qa in paragraph["qas"]:
                         self.question_id += 1
-                        acceptable_gnd_truths = []
-                        for answer in qa["answers"]:
-                            acceptable_gnd_truths.append(answer["text"])
+                        acceptable_gnd_truths = [answer["text"] for answer in qa["answers"]]
                         question_ids_to_passage_context[self.question_id] = \
                             PassageContext(context, word_idx_to_text_position,
-                                acceptable_gnd_truths)
+                                           acceptable_gnd_truths)
                         question = qa["question"]
                         squad_question_id = qa["id"]
                         assert squad_question_id is not None
@@ -295,10 +297,10 @@ class DataParser():
                                 tok_question_with_bos_and_eos.append(token)
                             tok_question_with_bos_and_eos.append(_EOS)
 
-#                        tok_question_with_bos_and_eos.append(_BOS)
-#                        for token in tok_question:
-#                            tok_question_with_bos_and_eos.append(token)
-#                        tok_question_with_bos_and_eos.append(_EOS)
+                        #                        tok_question_with_bos_and_eos.append(_BOS)
+                        #                        for token in tok_question:
+                        #                            tok_question_with_bos_and_eos.append(token)
+                        #                        tok_question_with_bos_and_eos.append(_EOS)
 
                         qst_ner_dict = self._get_ner_dict(tok_question)
                         assert tok_question is not None
@@ -323,18 +325,18 @@ class DataParser():
             print("")
             spans = np.array(spans[:self.value_idx], dtype=np.int32)
             return RawTrainingData(
-                list_contexts = list_contexts,
-                list_word_in_question = list_word_in_question,
-                list_questions = list_questions,
-                list_word_in_context = list_word_in_context,
-                spans = spans,
-                question_ids = question_ids,
-                context_pos = context_pos,
-                question_pos = question_pos,
-                context_ner = context_ner,
-                question_ner = question_ner,
-                question_ids_to_squad_question_id = question_ids_to_squad_question_id,
-                question_ids_to_passage_context = question_ids_to_passage_context)
+                list_contexts=list_contexts,
+                list_word_in_question=list_word_in_question,
+                list_questions=list_questions,
+                list_word_in_context=list_word_in_context,
+                spans=spans,
+                question_ids=question_ids,
+                context_pos=context_pos,
+                question_pos=question_pos,
+                context_ner=context_ner,
+                question_ner=question_ner,
+                question_ids_to_squad_question_id=question_ids_to_squad_question_id,
+                question_ids_to_passage_context=question_ids_to_passage_context)
 
     def _create_padded_array(self, list_of_py_arrays, max_len, pad_value):
         return [py_arr + [pad_value] * (max_len - len(py_arr)) for py_arr in list_of_py_arrays]
@@ -349,7 +351,6 @@ class DataParser():
             print("Train & dev data already exist.")
             return
 
-
         print("Getting DEV dataset")
         dev_raw_data = self._create_train_data_internal(
             constants.DEV_SQUAD_FILE, is_dev=True)
@@ -360,29 +361,29 @@ class DataParser():
         print("Num POS categories", self.pos_categories.get_num_categories())
 
         max_context_length = max(
-                max([len(x) for x in train_raw_data.list_contexts]),
-                max([len(x) for x in dev_raw_data.list_contexts]))
+            max([len(x) for x in train_raw_data.list_contexts]),
+            max([len(x) for x in dev_raw_data.list_contexts]))
 
         max_question_length = max(
-                max([len(x) for x in train_raw_data.list_questions]),
-                max([len(x) for x in dev_raw_data.list_questions]))
+            max([len(x) for x in train_raw_data.list_questions]),
+            max([len(x) for x in dev_raw_data.list_questions]))
 
         print("Saving TRAIN data")
         train_file_saver = DatasetFilesSaver(
-                train_files_wrapper,
-                max_context_length,
-                max_question_length,
-                self.vocab,
-                train_raw_data)
+            train_files_wrapper,
+            max_context_length,
+            max_question_length,
+            self.vocab,
+            train_raw_data)
         train_file_saver.save()
 
         print("Saving DEV data")
         dev_file_saver = DatasetFilesSaver(
-                dev_files_wrapper,
-                max_context_length,
-                max_question_length,
-                self.vocab,
-                dev_raw_data)
+            dev_files_wrapper,
+            max_context_length,
+            max_question_length,
+            self.vocab,
+            dev_raw_data)
         dev_file_saver.save()
 
         print("Finished creating training data!")
