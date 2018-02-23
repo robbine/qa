@@ -84,27 +84,11 @@ def _eval(session, towers, squad_dataset, options, is_train, sample_limit):
         run_ops.append(tower.get_end_span_probs())
         run_ops.append(tower.get_data_index_iterator())
         run_ops.append(tower.get_qst())
-    dataset = squad_dataset.train_ds if is_train else squad_dataset.dev_ds
 
-    num_dev_files = squad_dataset.get_num_dev_files()
-    num_files_processed = 0
-    estimated_total_dev_samples = squad_dataset.estimate_total_dev_ds_size()
-    total_samples_processed = 0
-    start_time = time.time()
     squad_prediction_format = {} # key=squad question id, value=prediction (string)
     while True:
-        if total_samples_processed >= estimated_total_dev_samples \
-            and num_dev_files == 1:
-            break
-        if sample_limit is None and num_files_processed >= num_dev_files:
-            break
-        if sample_limit is not None and total_samples_processed >= sample_limit:
-            break
         feed_dict = get_eval_feed_dict(squad_dataset, options, towers, is_train=is_train)
-        iter_start = time.time()
         towers_spans_values = session.run(run_ops, feed_dict=feed_dict)
-        batch_increment = options.batch_size * max(1, options.num_gpus)
-        total_samples_processed += batch_increment
 
         num_towers = len(towers)
         items_per_tower = int(len(run_ops) / num_towers)
@@ -130,36 +114,18 @@ def _eval(session, towers, squad_dataset, options, is_train, sample_limit):
                 example_index = data_indices[zz]
                 question_word_ids = qst_values[zz]
                 question = find_question_sentence(question_word_ids, squad_dataset.vocab)
-                prediction_str = dataset.get_sentence(example_index, start, end)
-                if dataset.question_ids_to_squad_ids is not None:
+                prediction_str = squad_dataset.get_sentence(example_index, start, end, is_train)
+                if squad_dataset.question_ids_to_squad_ids(is_train) is not None:
                     squad_question_id = \
-                        dataset.question_ids_to_squad_ids[example_index]
+                        squad_dataset.question_ids_to_squad_ids(is_train)[example_index]
                     if squad_question_id in squad_prediction_format:
                         continue
                     squad_prediction_format[squad_question_id] = prediction_str
                 text_predictions.append(prediction_str)
-                acceptable_gnd_truths = dataset.get_sentences_for_all_gnd_truths(example_index)
+                acceptable_gnd_truths = squad_dataset.get_sentences_for_all_gnd_truths(example_index, is_train)
                 ground_truths.append(acceptable_gnd_truths)
-                passages.append(dataset.get_sentence(example_index, 0, squad_dataset.get_max_ctx_len() - 1))
+                passages.append(squad_dataset.get_sentence(example_index, 0, squad_dataset.get_max_ctx_len() - 1, is_train))
                 questions.append(question)
-        if not is_train:
-            squad_dataset.increment_val_samples_processed(batch_increment)
-        else:
-            squad_dataset.increment_train_samples_processed(batch_increment)
-        if squad_dataset.get_current_dev_file_number() != num_files_processed:
-            num_files_processed += 1
-
-            samples = sample_limit if sample_limit is not None \
-                else estimated_total_dev_samples
-            est_percent_done = min((100 * float(total_samples_processed) / float(samples)), 100)
-            est_processing_rate = est_percent_done / (time.time() - start_time)
-            iter_time = time.time() - iter_start
-            est_time_left = (float(samples
-                - total_samples_processed) / batch_increment) * iter_time
-            clear_printed_line()
-            print("Estimated percent evaluated: %f (processing files: %d of %d). %s"
-                % (est_percent_done, min(num_files_processed + 1, num_dev_files),
-                    num_dev_files, readable_eta(est_time_left)))
     print("")
     if not is_train:
         if not os.path.exists(options.evaluation_dir):

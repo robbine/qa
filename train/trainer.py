@@ -4,6 +4,7 @@
 import os
 import shutil
 import time
+import tqdm
 
 from decimal import Decimal
 from model.model_types import MODEL_TYPES
@@ -125,8 +126,8 @@ class Trainer:
             current_iter = int(self.session.run(iteration_num))
             current_highest_f1 = self.session.run(self.highest_f1)
             current_learning_rate = self.session.run(learning_rate)
-            total_ds_size = self.sq_dataset.estimate_total_train_ds_size()
-            val_ds_size = self.sq_dataset.estimate_total_dev_ds_size()
+            total_ds_size = self.sq_dataset.get_total(is_train=True)
+            val_ds_size = self.sq_dataset.get_total(is_train=False)
             iterations_per_epoch = int(total_ds_size / \
                 (self.options.batch_size * max(1, self.options.num_gpus)))
             start_time = time.time()
@@ -136,7 +137,6 @@ class Trainer:
             i = current_iter - 1
             num_bad_checkpoints = 0
             epoch_start = time.time()
-
             while True:
                 i += 1
                 iter_start = time.time()

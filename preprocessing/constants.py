@@ -30,6 +30,8 @@ QUESTION_POS_FILE_PATTERN = "question.pos.%d.npy"
 QUESTION_NER_FILE_PATTERN = "question.ner.%d.npy"
 QUESTION_IDS_TO_SQUAD_QUESTION_ID_FILE_PATTERN = "question_ids_to_squad_question_id.%d"
 QUESTION_IDS_TO_PASSAGE_CONTEXT_FILE_PATTERN = "passage_context.%d"
+QUESTION_IDS_TO_SQUAD_QUESTION_ID = "question_ids_to_squad_question_id"
+QUESTION_IDS_TO_PASSAGE_CONTEXT = "passage_context"
 
 VECTORS_URL = "http://nlp.stanford.edu/data/glove.840B.300d.zip"
 WORD_VEC_DIM = 300

@@ -7,6 +7,7 @@ import time
 
 from datasets.test_data import TestData
 from datasets.squad_data import SquadData
+from datasets.squad_tfdata import SquadTFData
 from train.s3_util import *
 
 def create_checkpoint_file_name(options):
@@ -16,7 +17,7 @@ def create_s3_save_key(options):
     return options.model_type + "." + options.experiment_name
 
 def create_sq_dataset(options):
-    return TestData(options) if options.use_fake_dataset else SquadData(options)
+    return SquadTFData(options)
 
 def create_session():
     return tf.Session(config=tf.ConfigProto(

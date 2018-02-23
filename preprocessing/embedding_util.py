@@ -57,8 +57,6 @@ def split_vocab_and_embedding(data_dir, download_dir):
         vocab_o_file.write(word + "\n")
         embedding[i] = np.fromstring(line[idx + 1:], dtype=np.float32, sep=' ')
         i += 1
-        if i % 10000 == 0 or i == num_lines:
-            print("Processed %d of %d (%f percent done)" % (i, num_lines, 100 * float(i) / float(num_lines)))
     sorted_chars = sorted(char_counts.items(), key=operator.itemgetter(1),
         reverse=True)
     frequent_chars = dict((x[0], i) for i, x in enumerate(

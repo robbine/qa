@@ -113,6 +113,10 @@ f.DEFINE_integer("num_stochastic_answer_pointer_steps", 5,
 f.DEFINE_boolean("use_token_reembedding", False, "Whether to use token" +
         "reembedding on the model inputs (passage & question).")
 f.DEFINE_boolean("read_graph", False, "Whether to read pre-trained graph")
-
+f.DEFINE_integer("num_threads", 4, "Number of threads in input pipeline")
+f.DEFINE_integer("capacity", 15000, "Batch size of dataset shuffle")
+f.DEFINE_integer("bucket_range", [40, 401, 40], "the range of bucket")
+f.DEFINE_integer("num_steps", 60000, "Number of steps")
+f.DEFINE_integer("checkpoint", 1000, "checkpoint to save and evaluate the model")
 def get_options_from_flags():
     return tf.app.flags.FLAGS

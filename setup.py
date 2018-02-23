@@ -19,7 +19,8 @@ def main(_):
             print("exist")
     download_data(download_dir)
     split_vocab_and_embedding(data_dir, download_dir)
-    DataParser(data_dir, download_dir).create_train_data()
+    # DataParser(data_dir, download_dir).create_train_data()
+    DataParser(data_dir, download_dir).write_train_data(options.max_ctx_length, options.max_qst_length)
     if options.use_cove_vectors:
         save_cove_weights(options)
     maybe_upload_data_files_to_s3(options)

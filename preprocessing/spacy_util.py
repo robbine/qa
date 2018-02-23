@@ -20,7 +20,5 @@ def create_tokenizer(nlp):
     infix_re = re.compile(infix_pattern)
     prefix_re = re.compile(prefix_pattern)
     suffix_re = re.compile(suffix_pattern)
-    tokenizer = Tokenizer(vocab=nlp.vocab, infix_finditer=infix_re.finditer,
-        prefix_search=prefix_re.search,
-        suffix_search=suffix_re.search)
+    tokenizer = Tokenizer(vocab=nlp.vocab, infix_finditer=infix_re.finditer, prefix_search=prefix_re.search, suffix_search=suffix_re.search)
     return tokenizer
