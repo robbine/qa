@@ -40,7 +40,7 @@ class Trainer:
             os.makedirs(self.options.checkpoint_dir)
         except:
             print("exist")
-        with tf.Graph().as_default():
+        with tf.Graph().as_default(), tf.device('/cpu:0'):
             self.session = create_session()
             self.sq_dataset = create_sq_dataset(self.options)
 
