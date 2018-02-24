@@ -270,5 +270,8 @@ class Trainer:
                 self.sq_dataset, embedding_var, word_chars_var,
                 compute_gradients=True, sess=self.session)
             towers = self.model_builder.get_towers()
-            ctx = self.session.run(towers[0].ctx_iterator)
+            self.sq_dataset.setup_with_tf_session(self.session)
+            ctx = self.session.run(towers[0].ctx_iterator, feed_dict=
+                        get_train_feed_dict(self.sq_dataset,
+                            self.options, self.model_builder.get_towers()))
             print(ctx.shape)
