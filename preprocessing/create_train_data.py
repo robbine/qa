@@ -419,6 +419,7 @@ class DataParser():
             question_ids_to_squad_question_id = {}
             question_ids_to_passage_context = {}
             total = 0
+            total_ = 0
             for dataset_id in range(len(dataset)):
                 if dataset_id > 0 and _DEBUG_USE_ONLY_FIRST_ARTICLE:
                     break
@@ -474,7 +475,7 @@ class DataParser():
 
                         qst_ner_dict = self._get_ner_dict(tok_question)
                         assert tok_question is not None
-                        total += self._maybe_write_samples(writer, max_ctx_length, max_qst_length,
+                        count, count_ = self._maybe_write_samples(writer, max_ctx_length, max_qst_length,
                             tok_context=tok_contexts_with_bos_and_eos,
                             tok_question=tok_question_with_bos_and_eos, qa=qa,
                             ctx_offset_dict=ctx_offset_dict,
@@ -482,14 +483,19 @@ class DataParser():
                             is_dev=is_dev,
                             ctx_ner_dict=ctx_ner_dict,
                             qst_ner_dict=qst_ner_dict)
+                        total += count
+                        total_ += count_
+        print('total_ is ' + str(total_))
         return question_ids_to_passage_context, question_ids_to_squad_question_id, total
 
     def _maybe_write_samples(self, writer, max_ctx_length, max_qst_length, tok_context=None, tok_question=None, qa=None,
                            ctx_offset_dict=None, ctx_end_offset_dict=None,
                            is_dev=None, ctx_ner_dict=None, qst_ner_dict=None):
         total = 0
+        total_ = 0
         first_answer = True
         for answer in qa["answers"]:
+            total_ += 1
             answer_start = answer["answer_start"]
             text = answer["text"]
             answer_end = answer_start + len(text)
@@ -531,7 +537,7 @@ class DataParser():
             # For dev, only keep one exmaple per question, and the set of all
             # acceptable answers. This reduces the required memory for storing
             # data.
-            if is_dev and not first_answer:
+            if is_dev and (first_answer is False):
                 continue
             first_answer = False
             ctx_vocab_ids_list, ctx_vocab_ids_set, \
@@ -567,4 +573,4 @@ class DataParser():
                                   }))
             writer.write(record.SerializeToString())
             total += 1
-        return total
+        return total, total_
