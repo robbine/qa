@@ -38,8 +38,8 @@ class SquadTFData:
 
         self.handle = tf.placeholder(tf.string, shape=[])
         self.iterator = tf.data.Iterator.from_string_handle(
-            self.handle, self.train_ds.dataset.output_types,
-            self.train_ds.dataset.output_shapes)
+            self.handle, self.train_ds.output_types,
+            self.train_ds.output_shapes)
         self.train_iterator = self.train_ds.make_one_shot_iterator()
         self.dev_iterator = self.dev_ds.make_one_shot_iterator()
 
@@ -82,12 +82,12 @@ class SquadTFData:
         return self.dev_handle
 
     def get_sentences_for_all_gnd_truths(self, question_id, is_train):
-        passage_context = self.train_question_ids_to_passage_context[question_id] if is_train else self.dev_question_ids_to_passage_context
+        passage_context = self.train_question_ids_to_passage_context[question_id] if is_train else self.dev_question_ids_to_passage_context[question_id]
         return passage_context.acceptable_gnd_truths
 
     def get_sentence(self, question_id, start_idx, end_idx, is_train):
         # A 'PassageContext' defined in preprocessing/create_train_data.py
-        passage_context = self.train_question_ids_to_passage_context[question_id] if is_train else self.dev_question_ids_to_passage_context
+        passage_context = self.train_question_ids_to_passage_context[question_id] if is_train else self.dev_question_ids_to_passage_context[question_id]
         max_word_id = max(passage_context.word_id_to_text_positions.keys())
         text_start_idx = passage_context.word_id_to_text_positions[min(start_idx, max_word_id)].start_idx
         text_end_idx = passage_context.word_id_to_text_positions[min(end_idx, max_word_id)].end_idx
