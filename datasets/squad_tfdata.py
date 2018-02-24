@@ -37,7 +37,7 @@ class SquadTFData:
 
 
         self.handle = tf.placeholder(tf.string, shape=[])
-        self.iterator = tf.contrib.data.Iterator.from_string_handle(
+        self.iterator = tf.data.Iterator.from_string_handle(
             self.handle, self.train_ds.dataset.output_types,
             self.train_ds.dataset.output_shapes)
         self.train_iterator = self.train_ds.make_one_shot_iterator()
