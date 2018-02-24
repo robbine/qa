@@ -269,9 +269,20 @@ class Trainer:
             self.model_builder = ModelBuilder(self.optimizer, self.options,
                 self.sq_dataset, embedding_var, word_chars_var,
                 compute_gradients=True, sess=self.session)
-            towers = self.model_builder.get_towers()
+            grads, variables = zip(*average_gradients(self.model_builder.get_tower_grads()))
+            grads, global_norm = tf.clip_by_global_norm(grads, self.options.max_global_norm)
+            train_op = self.optimizer.apply_gradients(zip(grads, variables))
+            iteration_num = tf.Variable(initial_value=1, trainable=False,
+                dtype=tf.int32)
+            incr_iter = tf.assign(iteration_num, iteration_num + 1)
+            self.session.run(tf.global_variables_initializer(), feed_dict={
+                embedding_placeholder: self.sq_dataset.embeddings,
+                word_chars_placeholder: self.sq_dataset.word_chars,
+            })
             self.sq_dataset.setup_with_tf_session(self.session)
-            ctx = self.session.run(towers[0].ctx_iterator, feed_dict=
-                        get_train_feed_dict(self.sq_dataset,
-                            self.options, self.model_builder.get_towers()))
-            print(ctx.shape)
+            while True:
+                loss = self.model_builder.get_loss()
+                _, loss_value = self.session.run([train_op, loss], feed_dict=
+                                     get_train_feed_dict(self.sq_dataset,
+                                                         self.options, self.model_builder.get_towers()))
+                print(loss_value)
