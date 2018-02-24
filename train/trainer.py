@@ -237,3 +237,38 @@ class Trainer:
                     print("Cumulative run time %s" % readable_time(
                         time.time() - train_start_time))
                     epoch_start = time.time()
+
+    def debug(self):
+        train_start_time = time.time()
+        self.s3 = None
+        try:
+            os.makedirs(self.options.checkpoint_dir)
+        except:
+            print("exist")
+        with tf.Graph().as_default(), tf.device('/cpu:0'):
+            self.session = create_session()
+            self.sq_dataset = create_sq_dataset(self.options)
+
+            embedding_placeholder = tf.placeholder(tf.float32,
+                shape=self.sq_dataset.embeddings.shape)
+            embedding_var = \
+                tf.Variable(embedding_placeholder, trainable=False)
+            word_chars_placeholder = tf.placeholder(tf.float32,
+                shape=self.sq_dataset.word_chars.shape)
+            word_chars_var = \
+                tf.Variable(word_chars_placeholder, trainable=False)
+
+            learning_rate = tf.Variable(name="learning_rate", initial_value=
+                self.options.learning_rate, trainable=False, dtype=tf.float32)
+            learning_rate_placeholder = tf.placeholder(tf.float32)
+            assign_learning_rate = tf.assign(learning_rate,
+                    tf.maximum(self.options.min_learning_rate,
+                        learning_rate_placeholder))
+            self.optimizer = tf.train.AdamOptimizer(
+                learning_rate=learning_rate)
+            self.model_builder = ModelBuilder(self.optimizer, self.options,
+                self.sq_dataset, embedding_var, word_chars_var,
+                compute_gradients=True, sess=self.session)
+            towers = self.model_builder.get_towers()
+            ctx = self.session.run(towers[0].ctx_iterator)
+            print(ctx.shape)
