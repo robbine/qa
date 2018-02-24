@@ -65,7 +65,7 @@ class DataParser():
 
     def _convert_1d_np_arr_with_possible_padding(self, lst,
             max_dim, pad_value):
-        np_arr = np.array(lst)[:max_dim]
+        np_arr = np.array(lst, dtype=np.int32)[:max_dim]
         return np.pad(np_arr,
                       pad_width=(0, max_dim - np_arr.shape[0]),
                       mode="constant",

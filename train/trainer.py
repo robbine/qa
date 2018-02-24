@@ -146,8 +146,6 @@ class Trainer:
                         loss_summary, gradients_summary, global_norm], feed_dict=
                         get_train_feed_dict(self.sq_dataset,
                             self.options, self.model_builder.get_towers()))
-                self.sq_dataset.increment_train_samples_processed(
-                    self.options.batch_size * num_towers)
                 iter_end = time.time()
                 time_per_iter = iter_end - iter_start
                 time_per_epoch = time_per_iter * iterations_per_epoch
