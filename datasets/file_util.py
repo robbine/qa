@@ -32,16 +32,16 @@ def get_record_parser(options):
                                                'qst_in_ctx': tf.FixedLenFeature([], tf.string)
                                            })
 
-        ctx_vocab_ids = tf.reshape(tf.decode_raw(features["ctx_vocab_ids"], tf.int32), [options.max_ctx_length])
-        qst_vocab_ids = tf.reshape(tf.decode_raw(features["qst_vocab_ids"], tf.int32), [options.max_qst_length])
-        ctx_pos_ids = tf.reshape(tf.decode_raw(features["ctx_pos_ids"], tf.int32), [options.max_ctx_length])
-        ctx_ner_ids = tf.reshape(tf.decode_raw(features["ctx_ner_ids"], tf.int32), [options.max_ctx_length])
-        span = tf.cast(features["span"], tf.int32)
-        question_id = tf.cast(features['question_id'], tf.int32)
-        qst_pos_ids = tf.reshape(tf.decode_raw(features['qst_pos_ids'], tf.int32), [options.max_qst_length])
-        qst_ner_ids = tf.reshape(tf.decode_raw(features['qst_ner_ids'], tf.int32), [options.max_qst_length])
-        ctx_in_qst = tf.reshape(tf.decode_raw(features['ctx_in_qst'], tf.int32), [options.max_ctx_length])
-        qst_in_ctx = tf.reshape(tf.decode_raw(features['qst_in_ctx'], tf.int32), [options.max_qst_length])
+        ctx_vocab_ids = tf.reshape(tf.decode_raw(features["ctx_vocab_ids"], tf.int64), [options.max_ctx_length])
+        qst_vocab_ids = tf.reshape(tf.decode_raw(features["qst_vocab_ids"], tf.int64), [options.max_qst_length])
+        ctx_pos_ids = tf.reshape(tf.decode_raw(features["ctx_pos_ids"], tf.int64), [options.max_ctx_length])
+        ctx_ner_ids = tf.reshape(tf.decode_raw(features["ctx_ner_ids"], tf.int64), [options.max_ctx_length])
+        span = features["span"]
+        question_id = features['question_id']
+        qst_pos_ids = tf.reshape(tf.decode_raw(features['qst_pos_ids'], tf.int64), [options.max_qst_length])
+        qst_ner_ids = tf.reshape(tf.decode_raw(features['qst_ner_ids'], tf.int64), [options.max_qst_length])
+        ctx_in_qst = tf.reshape(tf.decode_raw(features['ctx_in_qst'], tf.int64), [options.max_ctx_length])
+        qst_in_ctx = tf.reshape(tf.decode_raw(features['qst_in_ctx'], tf.int64), [options.max_qst_length])
         return ctx_vocab_ids, qst_vocab_ids, ctx_pos_ids, ctx_ner_ids, span, question_id, qst_pos_ids, qst_ner_ids, ctx_in_qst, qst_in_ctx
     return parse
 
