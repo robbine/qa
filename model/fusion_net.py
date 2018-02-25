@@ -36,14 +36,24 @@ class FusionNet(BaseModel):
 
         # Step 3. Fuse the "history-of-word" question vectors into the
         # "history-of-word" context vectors.
-        ctx_how = tf.concat([self.ctx_glove, self.ctx_cove,
-            sequence_dropout(ctx_low_level, self.keep_prob),
-            sequence_dropout(ctx_high_level, self.keep_prob)],
-            axis=-1)
-        qst_how = tf.concat([self.qst_glove, self.qst_cove,
-            sequence_dropout(qst_low_level, self.keep_prob),
-            sequence_dropout(qst_high_level, self.keep_prob)],
-            axis=-1)
+        if self.options.use_cove_vectors:
+            ctx_how = tf.concat([self.ctx_glove, self.ctx_cove,
+                sequence_dropout(ctx_low_level, self.keep_prob),
+                sequence_dropout(ctx_high_level, self.keep_prob)],
+                axis=-1)
+            qst_how = tf.concat([self.qst_glove, self.qst_cove,
+                sequence_dropout(qst_low_level, self.keep_prob),
+                sequence_dropout(qst_high_level, self.keep_prob)],
+                axis=-1)
+        else:
+            ctx_how = tf.concat([self.ctx_glove,
+                sequence_dropout(ctx_low_level, self.keep_prob),
+                sequence_dropout(ctx_high_level, self.keep_prob)],
+                axis=-1)
+            qst_how = tf.concat([self.qst_glove,
+                sequence_dropout(qst_low_level, self.keep_prob),
+                sequence_dropout(qst_high_level, self.keep_prob)],
+                axis=-1)
         how_dim = ctx_how.get_shape()[-1]
         ctx_low_fusion = vector_fusion("ctx_qst_low_fusion", self.options,
             ctx_how, qst_how, how_dim, qst_low_level, 1.0)
