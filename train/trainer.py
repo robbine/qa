@@ -166,8 +166,6 @@ class Trainer:
                             loss_summary, gradients_summary, loss], 
                             feed_dict=get_dev_feed_dict(self.sq_dataset,
                                 self.options, self.model_builder.get_towers()))
-                    self.sq_dataset.increment_val_samples_processed(
-                        self.options.batch_size * num_towers)
                     if self.options.log_gradients:
                         self.val_writer.add_summary(gradients_summary_value, i)
                     if self.options.log_loss:
@@ -239,12 +237,6 @@ class Trainer:
                     epoch_start = time.time()
 
     def debug(self):
-        train_start_time = time.time()
-        self.s3 = None
-        try:
-            os.makedirs(self.options.checkpoint_dir)
-        except:
-            print("exist")
         with tf.Graph().as_default(), tf.device('/cpu:0'):
             self.session = create_session()
             self.sq_dataset = create_sq_dataset(self.options)
@@ -282,7 +274,5 @@ class Trainer:
             self.sq_dataset.setup_with_tf_session(self.session)
             while True:
                 loss = self.model_builder.get_loss()
-                _, loss_value = self.session.run([train_op, loss], feed_dict=
-                                     get_train_feed_dict(self.sq_dataset,
-                                                         self.options, self.model_builder.get_towers()))
+                _, loss_value = self.session.run([train_op, loss], feed_dict=get_train_feed_dict(self.sq_dataset, self.options, self.model_builder.get_towers()))
                 print(loss_value)
