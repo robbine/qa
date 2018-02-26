@@ -85,11 +85,14 @@ def _eval(session, towers, squad_dataset, options, is_train, sample_limit):
         run_ops.append(tower.get_data_index_iterator())
         run_ops.append(tower.get_qst())
 
+    estimated_total_dev_samples = squad_dataset.get_total(is_train=False)
+    total_samples_processed = 0
     squad_prediction_format = {} # key=squad question id, value=prediction (string)
-    while True:
+    while total_samples_processed < estimated_total_dev_samples:
         feed_dict = get_eval_feed_dict(squad_dataset, options, towers, is_train=is_train)
         towers_spans_values = session.run(run_ops, feed_dict=feed_dict)
-
+        batch_increment = options.batch_size * max(1, options.num_gpus)
+        total_samples_processed += batch_increment
         num_towers = len(towers)
         items_per_tower = int(len(run_ops) / num_towers)
         for z in range(num_towers):
