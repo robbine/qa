@@ -229,6 +229,7 @@ class Trainer:
                         maybe_upload_files_to_s3(self.s3, self.s3_save_key,
                             self.options.checkpoint_dir, self.options)
                         print("Saved model at iteration", i)
+                        maybe_upload_files_to_s3(self.s3, self.options.model_type+"_"+self.options.experiment_name+"_evaluations", self.options.evaluation_dir, self.options)
                         num_bad_checkpoints = 0
                     print("Total epoch time %s" % readable_time(
                         time.time() - epoch_start))
