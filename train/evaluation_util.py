@@ -114,7 +114,7 @@ def _eval(session, towers, squad_dataset, options, is_train, sample_limit):
             for zz in range(start_span_probs.shape[0]):
                 start, end = get_best_start_and_end(start_span_probs[zz],
                     end_span_probs[zz], options)
-                example_index = data_indices[zz]
+                example_index = data_indices[zz][0]
                 question_word_ids = qst_values[zz]
                 question = find_question_sentence(question_word_ids, squad_dataset.vocab)
                 prediction_str = squad_dataset.get_sentence(example_index, start, end, is_train)
