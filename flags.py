@@ -118,5 +118,6 @@ f.DEFINE_integer("capacity", 15000, "Batch size of dataset shuffle")
 f.DEFINE_integer("bucket_range", [40, 401, 40], "the range of bucket")
 f.DEFINE_integer("num_steps", 60000, "Number of steps")
 f.DEFINE_integer("checkpoint", 1000, "checkpoint to save and evaluate the model")
+f.DEFINE_float("linear_interpolation", 0.01, "linear interpolation between MLE and CTC")
 def get_options_from_flags():
     return tf.app.flags.FLAGS

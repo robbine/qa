@@ -69,7 +69,7 @@ class DataParser():
         return np.pad(np_arr,
                       pad_width=(0, max_dim - np_arr.shape[0]),
                       mode="constant",
-                      constant_values=pad_value).astype(np.int32)
+                      constant_values=pad_value)
 
     def _parse_data_from_tokens_list(self, tokens_list, tokens_ner_dict):
         """Input: A spaCy doc.
@@ -569,7 +569,9 @@ class DataParser():
                                   "qst_pos_ids": tf.train.Feature(bytes_list=tf.train.BytesList(value=[qst_pos.tostring()])),
                                   "qst_ner_ids": tf.train.Feature(bytes_list=tf.train.BytesList(value=[qst_ner.tostring()])),
                                   "ctx_in_qst": tf.train.Feature(bytes_list=tf.train.BytesList(value=[word_in_question.tostring()])),
-                                  "qst_in_ctx": tf.train.Feature(bytes_list=tf.train.BytesList(value=[word_in_context.tostring()]))
+                                  "qst_in_ctx": tf.train.Feature(bytes_list=tf.train.BytesList(value=[word_in_context.tostring()])),
+                                  "span_ix": tf.train.Feature(int64_list=tf.train.Int64List(value=list(range(tok_start_idx, tok_end_idx+1)))),
+                                  "span_val": tf.train.Feature(int64_list=tf.train.Int64List(value=([1]*(tok_end_idx-tok_start_idx+1))))
                                   }))
             writer.write(record.SerializeToString())
             total += 1

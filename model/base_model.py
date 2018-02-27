@@ -15,7 +15,8 @@ class BaseModel(object):
         self.word_dim = self.sq_dataset.embeddings.shape[1]
         self.ctx_iterator, self.qst_iterator, self.ctx_pos_iterator, self.ctx_ner_iterator, \
         self.spn_iterator, self.data_index_iterator, self.qst_pos_iterator, self.qst_ner_iterator, \
-        self.wiq_iterator, self.wic_iterator = sq_dataset.iterator.get_next()
+        self.wiq_iterator, self.wic_iterator, self.sparse_span_iterator = sq_dataset.iterator.get_next()
+        self.sparse_span_iterator = tf.cast(self.sparse_span_iterator, dtype=tf.int32)
         self.embeddings = embeddings
         self.word_chars = word_chars
         self.cove_cells = cove_cells
@@ -43,6 +44,7 @@ class BaseModel(object):
         self.input_keep_prob = tf.placeholder(tf.float32, name="input_keep_prob")
         self.rnn_keep_prob = tf.placeholder(tf.float32, name="rnn_keep_prob")
         self.batch_size = tf.shape(self.ctx_iterator)[0]
+        self.ctx_len = tf.reduce_sum(tf.cast(tf.not_equal(self.ctx_iterator, self.sq_dataset.vocab.PAD_ID), tf.int32), axis=1)
         model_inputs = create_model_inputs(self.sess,
                 self.embeddings, self.ctx_iterator,
                 self.qst_iterator,

@@ -8,6 +8,7 @@ from model.match_lstm import MatchLstm
 from model.mnemonic_reader import MnemonicReader
 from model.qa_model import QaModel
 from model.rnet import Rnet
+from model.reinforcement_fusion_net import ReinforcementFusionNet
 
 MODEL_TYPES = {
     "debug": DebugModel,
@@ -17,4 +18,5 @@ MODEL_TYPES = {
     "mnemonic_reader": MnemonicReader,
     "qa_model": QaModel,
     "rnet": Rnet,
+    "reinforcement_fusion_net": ReinforcementFusionNet,
 }
