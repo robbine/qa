@@ -570,8 +570,6 @@ class DataParser():
                                   "qst_ner_ids": tf.train.Feature(bytes_list=tf.train.BytesList(value=[qst_ner.tostring()])),
                                   "ctx_in_qst": tf.train.Feature(bytes_list=tf.train.BytesList(value=[word_in_question.tostring()])),
                                   "qst_in_ctx": tf.train.Feature(bytes_list=tf.train.BytesList(value=[word_in_context.tostring()])),
-                                  "span_ix": tf.train.Feature(int64_list=tf.train.Int64List(value=list(range(tok_start_idx, tok_end_idx+1)))),
-                                  "span_val": tf.train.Feature(int64_list=tf.train.Int64List(value=([1]*(tok_end_idx-tok_start_idx+1))))
                                   }))
             writer.write(record.SerializeToString())
             total += 1

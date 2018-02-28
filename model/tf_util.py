@@ -36,3 +36,11 @@ def multiply_tensors(tensor1, tensor2):
     result = tf.reshape(tf.matmul(reshape_1, reshape_2), sh1_list + sh2_list)
     assert len(result.get_shape()) == len_sh1 + len_sh2 - 2
     return result
+
+
+def convert_dense_to_sparse_tensor(dense, default_value=0, dtype=tf.int32):
+    zero = tf.constant(default_value, dtype=dtype)
+    where = tf.not_equal(dense, zero)
+    indices = tf.where(where)
+    values = tf.gather_nd(dense, indices)
+    return tf.SparseTensor(indices, values, dense.shape)

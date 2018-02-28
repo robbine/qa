@@ -5,6 +5,7 @@ import tensorflow as tf
 
 from abc import ABCMeta, abstractmethod
 from model.input_util import *
+from model.tf_util import convert_dense_to_sparse_tensor
 
 class BaseModel(object):
     def __init__(self, options, sq_dataset, embeddings,
@@ -15,12 +16,18 @@ class BaseModel(object):
         self.word_dim = self.sq_dataset.embeddings.shape[1]
         self.ctx_iterator, self.qst_iterator, self.ctx_pos_iterator, self.ctx_ner_iterator, \
         self.spn_iterator, self.data_index_iterator, self.qst_pos_iterator, self.qst_ner_iterator, \
-        self.wiq_iterator, self.wic_iterator, self.sparse_span_iterator = sq_dataset.iterator.get_next()
-        self.sparse_span_iterator = tf.cast(self.sparse_span_iterator, dtype=tf.int32)
+        self.wiq_iterator, self.wic_iterator = sq_dataset.iterator.get_next()
         self.embeddings = embeddings
         self.word_chars = word_chars
         self.cove_cells = cove_cells
         self.sess = sess
+
+    def convert_spn_to_sparse_span_iterator(self):
+        full_indices = tf.stack([tf.range(self.options.max_ctx_length)]*self.batch_size)
+        firs_indices = (full_indices >= tf.expand_dims(self.spn_iterator[:,0], -1))
+        second_indices = (full_indices <= tf.expand_dims(self.spn_iterator[:,1], -1))
+        dense = tf.cast(firs_indices&second_indices, dtype=tf.int32)
+        return convert_dense_to_sparse_tensor(dense)
 
     def get_use_dropout_placeholder(self):
         return self.use_dropout_placeholder
@@ -45,6 +52,7 @@ class BaseModel(object):
         self.rnn_keep_prob = tf.placeholder(tf.float32, name="rnn_keep_prob")
         self.batch_size = tf.shape(self.ctx_iterator)[0]
         self.ctx_len = tf.reduce_sum(tf.cast(tf.not_equal(self.ctx_iterator, self.sq_dataset.vocab.PAD_ID), tf.int32), axis=1)
+        self.sparse_span_iterator = self.convert_spn_to_sparse_span_iterator()
         model_inputs = create_model_inputs(self.sess,
                 self.embeddings, self.ctx_iterator,
                 self.qst_iterator,

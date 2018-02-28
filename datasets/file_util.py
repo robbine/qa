@@ -30,7 +30,6 @@ def get_record_parser(options):
                                                'qst_ner_ids': tf.FixedLenFeature([], tf.string),
                                                'ctx_in_qst': tf.FixedLenFeature([], tf.string),
                                                'qst_in_ctx': tf.FixedLenFeature([], tf.string),
-                                               'sparse_span': tf.SparseFeature(index_key="span_ix", value_key="span_val", dtype=tf.int64, size=options.max_ctx_length),
                                            })
 
         ctx_vocab_ids = tf.reshape(tf.decode_raw(features["ctx_vocab_ids"], tf.int64), [options.max_ctx_length])
@@ -43,8 +42,7 @@ def get_record_parser(options):
         qst_ner_ids = tf.reshape(tf.decode_raw(features['qst_ner_ids'], tf.int64), [options.max_qst_length])
         ctx_in_qst = tf.reshape(tf.decode_raw(features['ctx_in_qst'], tf.int64), [options.max_ctx_length])
         qst_in_ctx = tf.reshape(tf.decode_raw(features['qst_in_ctx'], tf.int64), [options.max_qst_length])
-        sparse_span = features['sparse_span']
-        return ctx_vocab_ids, qst_vocab_ids, ctx_pos_ids, ctx_ner_ids, span, question_id, qst_pos_ids, qst_ner_ids, ctx_in_qst, qst_in_ctx, sparse_span
+        return ctx_vocab_ids, qst_vocab_ids, ctx_pos_ids, ctx_ner_ids, span, question_id, qst_pos_ids, qst_ner_ids, ctx_in_qst, qst_in_ctx
     return parse
 
 
@@ -55,7 +53,7 @@ def get_batch_dataset(record_file, parser, config):
     if config.is_bucket:
         buckets = [tf.constant(num) for num in range(*config.bucket_range)]
 
-        def key_func(ctx_vocab_ids, qst_vocab_ids, ctx_pos_ids, ctx_ner_ids, span, question_id, qst_pos_ids, qst_ner_ids, ctx_in_qst, qst_in_ctx, sparse_span):
+        def key_func(ctx_vocab_ids, qst_vocab_ids, ctx_pos_ids, ctx_ner_ids, span, question_id, qst_pos_ids, qst_ner_ids, ctx_in_qst, qst_in_ctx):
             c_len = tf.reduce_sum(
                 tf.cast(tf.cast(ctx_vocab_ids, tf.bool), tf.int32))
             t = tf.clip_by_value(buckets, 0, c_len)
