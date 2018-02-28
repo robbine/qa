@@ -101,4 +101,6 @@ class ReinforcementFusionNet(BaseModel):
         self.ctc_loss = connectionist_network_pointer(self.options, final_ctx, qst_understanding,
                 self.sparse_span_iterator, self.sq_dataset, self.keep_prob,
                 self.sess, self.batch_size, self.use_dropout_placeholder, self.ctx_len)
-        self.loss = self.fusion_loss * self.linear_interpolation + self.ctc_loss * (1 - self.linear_interpolation)
+        self.loss = tf.cond(tf.equal(self.linear_interpolation, tf.constant(1.0)),
+                                     lambda: self.fusion_loss,
+                                     lambda: self.fusion_loss * self.linear_interpolation + self.ctc_loss * (1 - self.linear_interpolation))
