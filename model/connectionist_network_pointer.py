@@ -41,9 +41,9 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
         weigths_out_h1 = tf.Variable(tf.truncated_normal([2, n_hidden],
                                                    stddev=np.sqrt(2.0 / (2*n_hidden))))
         biases_out_h1 = tf.Variable(tf.zeros([n_hidden]))
-        weights_classes = tf.Variable(tf.truncated_normal([n_hidden, 2],
+        weights_classes = tf.Variable(tf.truncated_normal([n_hidden, 3],
                                                      stddev=np.sqrt(2.0 / n_hidden)))
-        biases_classes = tf.Variable(tf.zeros([2]))
+        biases_classes = tf.Variable(tf.zeros([3]))
         ####Network
         forward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
         backward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
@@ -59,5 +59,5 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
         loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens))
 
         ####Evaluating
-        predictions = tf.to_int32(ctc.ctc_beam_search_decoder(logits3d, ctx_lens)[0][0])
-        return loss, predictions
+        #predictions = tf.to_int32(ctc.ctc_beam_search_decoder(logits3d, ctx_lens)[0][0])
+        return loss
