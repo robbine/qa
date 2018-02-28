@@ -9,7 +9,7 @@ from model.tf_util import convert_dense_to_sparse_tensor
 
 class BaseModel(object):
     def __init__(self, options, sq_dataset, embeddings,
-            word_chars, cove_cells, sess):
+            word_chars, linear_interpolation, cove_cells, sess):
         self.sq_dataset = sq_dataset
         self.options = options
         self.num_words = self.sq_dataset.embeddings.shape[0]
@@ -20,6 +20,7 @@ class BaseModel(object):
         self.embeddings = embeddings
         self.word_chars = word_chars
         self.cove_cells = cove_cells
+        self.linear_interpolation = linear_interpolation
         self.sess = sess
 
     def convert_spn_to_sparse_span_iterator(self):

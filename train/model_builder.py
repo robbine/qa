@@ -8,7 +8,7 @@ from model.cudnn_cove_lstm import *
 from model.model_types import MODEL_TYPES
 
 class ModelBuilder:
-    def __init__(self, optimizer, options, sq_dataset, embeddings, word_chars,
+    def __init__(self, optimizer, options, sq_dataset, embeddings, word_chars, linear_interpolation,
             compute_gradients, sess):
         self.sq_dataset = sq_dataset
         self.optimizer = optimizer
@@ -19,6 +19,7 @@ class ModelBuilder:
         self.loss = None
         self.embeddings = embeddings
         self.word_chars = word_chars
+        self.linear_interpolation = linear_interpolation
         self.sess = sess
         self._setup()
 
@@ -43,7 +44,7 @@ class ModelBuilder:
         print("Creating tower in model")
         tower = MODEL_TYPES[self.options.model_type](self.options,
                 self.sq_dataset, self.embeddings,
-                self.word_chars, self.cove_cells, self.sess)
+                self.word_chars, self.linear_interpolation, self.cove_cells, self.sess)
         tower.setup()
         print("Tower created")
         self.towers.append(tower)

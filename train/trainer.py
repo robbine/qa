@@ -59,10 +59,14 @@ class Trainer:
             assign_learning_rate = tf.assign(learning_rate,
                     tf.maximum(self.options.min_learning_rate,
                         learning_rate_placeholder))
+            linear_interpolation = tf.Variable(name="linear_interpolation", initial_value=
+                                               self.options.linear_interpolation, trainable=False, dtype=tf.float32)
+            linear_interpolation_placeholder = tf.placeholder(tf.float32)
+            assign_linear_interpolation = tf.assign(linear_interpolation, linear_interpolation_placeholder)
             self.optimizer = tf.train.AdamOptimizer(
                 learning_rate=learning_rate)
             self.model_builder = ModelBuilder(self.optimizer, self.options,
-                self.sq_dataset, embedding_var, word_chars_var,
+                self.sq_dataset, embedding_var, word_chars_var, linear_interpolation,
                 compute_gradients=True, sess=self.session)
             print("Applying gradients")
             apply_gradients_start_time = time.time()
