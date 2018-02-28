@@ -28,7 +28,7 @@ class BaseModel(object):
         firs_indices = (full_indices >= tf.expand_dims(self.spn_iterator[:,0], -1))
         second_indices = (full_indices <= tf.expand_dims(self.spn_iterator[:,1], -1))
         dense = tf.cast(firs_indices&second_indices, dtype=tf.int32)
-        pad_indices = tf.cast(full_indices >= tf.expand_dims(self.ctx_len, -1), dtype=tf.int64) * 2
+        pad_indices = tf.cast(full_indices >= tf.cast(tf.expand_dims(self.ctx_len, -1), dtype=tf.int64), dtype=tf.int32) * 2
         dense = dense + pad_indices
         return convert_dense_to_sparse_tensor(dense, default_value=2)
 
