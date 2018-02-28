@@ -43,4 +43,4 @@ def convert_dense_to_sparse_tensor(dense, default_value=0, dtype=tf.int32):
     where = tf.not_equal(dense, zero)
     indices = tf.where(where)
     values = tf.gather_nd(dense, indices)
-    return tf.SparseTensor(indices, values, dense.shape)
+    return tf.SparseTensor(indices, values, tf.shape(dense, out_type=tf.int64))
