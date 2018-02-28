@@ -35,7 +35,7 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
         max_qst_len = sq_dataset.get_max_qst_len()
         max_ctx_len = sq_dataset.get_max_ctx_len()
         ctx_dim = ctx.get_shape()[-1].value # 2 * rnn_size
-        ctx_rs = tf.reshape(ctx, [-1, ctx_dim])
+        ctx_rs = tf.reshape(tf.transpose(ctx, [1,0,2]), [-1, ctx_dim])
         ctx_list = tf.split(ctx_rs, options.max_ctx_length, 0)
         n_hidden = options.rnn_size
         weigths_out_h1 = tf.Variable(tf.truncated_normal([2, n_hidden],
@@ -56,7 +56,7 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
 
         ####Optimizing
         logits3d = tf.stack(logits)
-        loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens, time_major=False))
+        loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens))
 
         ####Evaluating
         predictions = tf.to_int32(ctc.ctc_beam_search_decoder(logits3d, ctx_lens)[0][0])
