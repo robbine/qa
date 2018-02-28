@@ -98,7 +98,7 @@ class ReinforcementFusionNet(BaseModel):
 #            decode_fusion_net(self.options, self.sq_dataset, self.keep_prob,
 #                final_ctx, qst_understanding, self.batch_size, self.spn_iterator,
 #                self.sess, self.use_dropout_placeholder)
-        self.ctc_loss = connectionist_network_pointer(self.options, final_ctx, qst_understanding,
+        self.ctc_loss, _ = connectionist_network_pointer(self.options, final_ctx, qst_understanding,
                 self.sparse_span_iterator, self.sq_dataset, self.keep_prob,
                 self.sess, self.batch_size, self.use_dropout_placeholder, self.ctx_len)
         self.loss = self.fusion_loss * self.linear_interpolation + self.ctc_loss * (1 - self.linear_interpolation)
