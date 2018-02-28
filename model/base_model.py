@@ -24,11 +24,11 @@ class BaseModel(object):
         self.sess = sess
 
     def convert_spn_to_sparse_span_iterator(self):
-        full_indices = tf.cast(tf.stack([tf.range(self.options.max_ctx_length)]*self.batch_size), dtype=tf.int64)
+        full_indices = tf.cast(tf.expand_dims(tf.range(self.options.max_ctx_length), 0), dtype=tf.int64)
         firs_indices = (full_indices >= tf.expand_dims(self.spn_iterator[:,0], -1))
         second_indices = (full_indices <= tf.expand_dims(self.spn_iterator[:,1], -1))
         dense = tf.cast(firs_indices&second_indices, dtype=tf.int32)
-        return convert_dense_to_sparse_tensor(dense), full_indices, firs_indices, second_indices, dense
+        return convert_dense_to_sparse_tensor(dense)
 
     def get_use_dropout_placeholder(self):
         return self.use_dropout_placeholder
@@ -53,7 +53,7 @@ class BaseModel(object):
         self.rnn_keep_prob = tf.placeholder(tf.float32, name="rnn_keep_prob")
         self.batch_size = tf.shape(self.ctx_iterator)[0]
         self.ctx_len = tf.reduce_sum(tf.cast(tf.not_equal(self.ctx_iterator, self.sq_dataset.vocab.PAD_ID), tf.int32), axis=1)
-        self.sparse_span_iterator, self.full_indices, self.firs_indices, self.second_indices, self.dense_span_iterator = self.convert_spn_to_sparse_span_iterator()
+        self.sparse_span_iterator = self.convert_spn_to_sparse_span_iterator()
         model_inputs = create_model_inputs(self.sess,
                 self.embeddings, self.ctx_iterator,
                 self.qst_iterator,
