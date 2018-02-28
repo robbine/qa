@@ -23,7 +23,7 @@ class BaseModel(object):
         self.sess = sess
 
     def convert_spn_to_sparse_span_iterator(self):
-        full_indices = tf.stack([tf.range(self.options.max_ctx_length)]*self.batch_size)
+        full_indices = tf.cast(tf.stack([tf.range(self.options.max_ctx_length)]*self.batch_size), dtype=tf.int64)
         firs_indices = (full_indices >= tf.expand_dims(self.spn_iterator[:,0], -1))
         second_indices = (full_indices <= tf.expand_dims(self.spn_iterator[:,1], -1))
         dense = tf.cast(firs_indices&second_indices, dtype=tf.int32)
