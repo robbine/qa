@@ -45,11 +45,11 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
                                                      stddev=np.sqrt(2.0 / n_hidden)))
         biases_classes = tf.Variable(tf.zeros([3]))
         ####Network
-        forward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
-        backward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
-        fb_h1, _, _ = tf.contrib.rnn.static_bidirectional_rnn(forward_h1, backward_h1, ctx_list, dtype=tf.float32,
-                                                             scope='BDLSTM_H1')
-        fb_h1rs = [tf.reshape(t, [batch_size, 2, n_hidden]) for t in fb_h1]
+        # forward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
+        # backward_h1 = tf.contrib.rnn.LSTMCell(n_hidden, use_peepholes=True, state_is_tuple=True)
+        # fb_h1, _, _ = tf.contrib.rnn.static_bidirectional_rnn(forward_h1, backward_h1, ctx_list, dtype=tf.float32,
+        #                                                      scope='BDLSTM_H1')
+        fb_h1rs = [tf.reshape(t, [batch_size, 2, n_hidden]) for t in ctx_list]
         out_h1 = [tf.reduce_sum(tf.multiply(t, weigths_out_h1), reduction_indices=1) + biases_out_h1 for t in fb_h1rs]
 
         logits = [tf.matmul(t, weights_classes) + biases_classes for t in out_h1]

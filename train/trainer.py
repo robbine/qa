@@ -60,7 +60,7 @@ class Trainer:
                     tf.maximum(self.options.min_learning_rate,
                         learning_rate_placeholder))
             linear_interpolation = tf.Variable(name="linear_interpolation", initial_value=
-                                               1.0, trainable=False, dtype=tf.float32)
+                                            0.9, trainable=False, dtype=tf.float32)
             linear_interpolation_placeholder = tf.placeholder(tf.float32)
             assign_linear_interpolation = tf.assign(linear_interpolation, linear_interpolation_placeholder)
             self.optimizer = tf.train.AdamOptimizer(
