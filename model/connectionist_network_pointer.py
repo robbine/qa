@@ -46,10 +46,9 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
             bidirectional=False, layer_size=ctx_dim, num_layers=1)
         state_h = s
         state_c = s
-        n_hidden = options.rnn_size
 
-        weights_classes = tf.Variable(tf.truncated_normal([2*n_hidden, 3],
-                                                     stddev=np.sqrt(2.0 / n_hidden)))
+        weights_classes = tf.Variable(tf.truncated_normal([ctx_dim, 3],
+                                                     stddev=np.sqrt(1.0 / ctx_dim)))
         biases_classes = tf.Variable(tf.zeros([3]))
         s, state_h, state_c = run_cudnn_lstm(ctx, keep_prob, options,
             lstm, batch_size, use_dropout,
