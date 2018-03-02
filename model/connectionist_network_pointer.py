@@ -11,7 +11,6 @@ from model.tf_util import *
 import numpy as np
 from tensorflow.python.ops import ctc_ops as ctc
 
-_NUMERICAL_STABILITY_EPSILON = 1e-8
 
 def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_dataset, keep_prob,
     sess, batch_size, use_dropout, ctx_lens):
@@ -57,7 +56,7 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
             initial_state_h=state_h, initial_state_c=state_c) # size(s) = [batch_size, max_ctx_len, rnn_size]
         fb_h1rs = [tf.squeeze(t) for t in tf.split(s, max_ctx_len, axis=1)] # size(fb_h1rs) = [batch_size, rnn_size]
         logits = [tf.matmul(t, weights_classes) + biases_classes for t in fb_h1rs]
-        logits3d = tf.stack(logits) + _NUMERICAL_STABILITY_EPSILON
+        logits3d = tf.stack(logits) + options.numerical_stability_epsilon
         loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens))
 
         ####Evaluating
