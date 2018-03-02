@@ -57,7 +57,7 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
         fb_h1rs = [tf.squeeze(t) for t in tf.split(s, max_ctx_len, axis=1)] # size(fb_h1rs) = [batch_size, rnn_size]
         logits = [tf.matmul(t, weights_classes) + biases_classes for t in fb_h1rs]
         logits3d = tf.stack(logits) + options.numerical_stability_epsilon
-        loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens))
+        loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens, ctc_merge_repeated=False))
 
         ####Evaluating
         #predictions = tf.to_int32(ctc.ctc_beam_search_decoder(logits3d, ctx_lens)[0][0])
