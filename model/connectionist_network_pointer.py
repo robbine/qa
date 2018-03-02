@@ -66,7 +66,7 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
         n_hidden = options.rnn_size
         W = tf.get_variable("W", shape=[ctx_dim, ctx_dim], dtype=tf.float32)
 
-        weights_classes = tf.Variable(tf.truncated_normal([2*n_hidden, 3],
+        weights_classes = tf.Variable(tf.truncated_normal([n_hidden, 3],
                                                      stddev=np.sqrt(2.0 / n_hidden)))
         biases_classes = tf.Variable(tf.zeros([3]))
 
@@ -79,8 +79,8 @@ def connectionist_network_pointer(options, ctx, qst, sparse_span_iterator, sq_da
 
         s, state_h, state_c = run_cudnn_lstm(x, keep_prob, options,
             lstm, batch_size, use_dropout,
-            initial_state_h=state_h, initial_state_c=state_c) # size(s) = [batch_size, 1, 2 * rnn_size]
-        fb_h1rs = [tf.squeeze(t) for t in s] # size(fb_h1rs) = [batch_size, 2 * rnn_size]
+            initial_state_h=state_h, initial_state_c=state_c) # size(s) = [batch_size, 1, rnn_size]
+        fb_h1rs = [tf.squeeze(t) for t in tf.split(s, max_ctx_len, axis=1)] # size(fb_h1rs) = [batch_size, rnn_size]
         logits = [tf.matmul(t, weights_classes) + biases_classes for t in fb_h1rs]
         logits3d = tf.stack(logits)
         loss = tf.reduce_mean(ctc.ctc_loss(sparse_span_iterator, logits3d, ctx_lens))
